@@ -5,10 +5,11 @@ const {
 	createTokenUser,
 	attachCookiesToResponse,
 	checkPermissions,
+	createJWT,
 } = require("../utils");
 
 const getAllUsers = async (req, res) => {
-	console.log(req.user);
+	// console.log(req.user);
 	const users = await User.find({ role: "user" }).select("-password");
 
 	res.status(StatusCodes.OK).json({ users });
@@ -43,8 +44,16 @@ const updateUser = async (req, res) => {
 	user.name = name;
 	await user.save();
 	const tokenUser = createTokenUser(user);
-	attachCookiesToResponse({ res, user: tokenUser });
-	res.status(StatusCodes.OK).json({ user: tokenUser });
+	// attachCookiesToResponse({ res, user: tokenUser });
+	const token = createJWT({ payload: tokenUser });
+	const oneDay = 1000 * 60 * 60 * 24;
+	res.cookie("token", token, {
+		httpOnly: true,
+		expires: new Date(Date.now() + oneDay),
+		secure: process.env.NODE_ENV === "production",
+		signed: true,
+	});
+	res.status(StatusCodes.OK).json({ user: tokenUser, token });
 };
 
 const updateUserPassword = async (req, res) => {

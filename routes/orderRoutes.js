@@ -11,7 +11,7 @@ const {
 const {
 	authenticateUser,
 	authorizedPermission,
-} = require("../middleware/authentication");
+} = require("../middleware/full-auth");
 
 router
 	.route("/")

@@ -24,7 +24,8 @@ const register = async (req, res) => {
 	// 	expires: new Date(Date.now() + oneDay),
 	// });
 	attachCookiesToResponse({ res, user: tokenUser });
-	res.status(StatusCodes.CREATED).json({ user: tokenUser });
+	const signCookie = req.signedCookies;
+	res.status(StatusCodes.CREATED).json({ user: tokenUser, signCookie });
 };
 
 const logIn = async (req, res) => {
@@ -45,7 +46,8 @@ const logIn = async (req, res) => {
 	// const tokenUser = { name: user.name, userId: user._id, role: user.role };
 	const tokenUser = createTokenUser(user);
 	attachCookiesToResponse({ res, user: tokenUser });
-	res.status(StatusCodes.OK).json({ user: tokenUser });
+	const signCookie = req.signedCookies;
+	res.status(StatusCodes.OK).json({ user: tokenUser, signCookie });
 };
 
 const logOut = async (req, res) => {

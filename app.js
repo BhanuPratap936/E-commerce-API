@@ -8,6 +8,11 @@ const xss = require("xss-clean");
 const rateLimiter = require("express-rate-limit");
 const mongoSanitize = require("express-mongo-sanitize");
 
+// Swagger UI
+const swaggerUI = require("swagger-ui-express");
+const YAML = require("yamljs");
+const swaggerDocument = YAML.load("./swagger.yaml");
+
 // express
 const express = require("express");
 const app = express();
@@ -52,8 +57,10 @@ app.use(express.static("./public"));
 app.use(fileUpload());
 
 app.get("/", (req, res) => {
-	res.send("E-commerce API");
+	res.send('<h1>E-commerce API</h1><a href="/api-docs">Documentation</a>');
 });
+
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
 app.get("/api/v1", (req, res) => {
 	// console.log(req.cookies);
